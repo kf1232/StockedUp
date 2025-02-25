@@ -1,29 +1,27 @@
 package com.fink.stockedup.ui.composable
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import com.fink.stockedup.data.entity.PantryItem
-import java.time.Instant
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.fink.stockedup.data.entity.PantryItem
 import com.fink.stockedup.utils.DateUtils.formatDate
 import com.fink.stockedup.utils.DateUtils.formatDateTime
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
-import java.util.Date
+import com.fink.stockedup.utils.DateUtils.calculateDaysUntilExpiration
 
 @Composable
 fun PantryItemRow(
@@ -41,8 +39,8 @@ fun PantryItemRow(
             .padding(vertical = 6.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onLongPress = { onLongPress() },
-                    onTap = { isExpanded = !isExpanded } // ✅ Prevents conflict between tap & long press
+                    onLongPress = { onLongPress() }, // ✅ Unified tap & long press handling
+                    onTap = { isExpanded = !isExpanded }
                 )
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -77,14 +75,27 @@ fun PantryItemRow(
                 Column(modifier = Modifier.padding(top = 12.dp)) {
                     Text("Quantity: ${item.itemQuantity}", fontSize = 14.sp)
                     Text("Category: ${item.itemCategory}", fontSize = 14.sp)
+
+                    // ✅ Expiration Date with Color Indicator
+                    val daysLeft = item.itemExpirationDate?.let { calculateDaysUntilExpiration(it) }
+                    val expirationColor = when {
+                        daysLeft == null -> Color.Gray
+                        daysLeft < 0 -> Color.Red // Expired
+                        daysLeft <= 3 -> Color.Yellow // ⚠️ Warning (About to expire)
+                        else -> Color.White
+                    }
+
                     Text(
                         text = "Expiration: ${item.itemExpirationDate?.let { formatDate(it) } ?: "N/A"}",
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        color = expirationColor // ✅ Color-coded expiration status
                     )
                     Text(
-                        text = "Days till Spoiled: ${item.itemExpirationDate?.let { calculateDaysUntilExpiration(it) } ?: "N/A"}",
-                        fontSize = 14.sp
+                        text = "Days till Spoiled: ${daysLeft ?: "N/A"}",
+                        fontSize = 14.sp,
+                        color = expirationColor // ✅ Same color coding
                     )
+
                     Text("Location: ${item.itemStorageLocation}", fontSize = 14.sp)
                     Text("Unit: ${item.itemUnit}", fontSize = 14.sp)
                     Text("Notes: ${item.itemNotes}", fontSize = 14.sp)
@@ -107,14 +118,6 @@ fun PantryItemRow(
     }
 }
 
-fun calculateDaysUntilExpiration(expirationDate: Date): Long {
-    val today = LocalDate.now()
-    val expiration = Instant.ofEpochMilli(expirationDate.time)
-        .atZone(ZoneId.systemDefault())
-        .toLocalDate()
-    return ChronoUnit.DAYS.between(today, expiration)
-}
-
 // ✅ Extracted Function to Avoid Code Duplication
 @Composable
 private fun QuantityButtonsRow(
@@ -131,7 +134,7 @@ private fun QuantityButtonsRow(
                 if (item.itemQuantity > 0) {
                     val updatedItem = item.copy(
                         itemQuantity = item.itemQuantity - 1,
-                        itemLastUpdated = Instant.now().toEpochMilli()
+                        itemLastUpdated = System.currentTimeMillis()
                     )
                     onUpdate(updatedItem)
                 }
@@ -142,7 +145,7 @@ private fun QuantityButtonsRow(
             onClick = {
                 val updatedItem = item.copy(
                     itemQuantity = item.itemQuantity + 1,
-                    itemLastUpdated = Instant.now().toEpochMilli()
+                    itemLastUpdated = System.currentTimeMillis()
                 )
                 onUpdate(updatedItem)
             }

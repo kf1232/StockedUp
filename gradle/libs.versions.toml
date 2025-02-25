@@ -10,6 +10,7 @@ roomCommon = "2.6.1"
 room = "2.6.1"
 paging = "3.3.6"
 gson = "2.10.1"
+animationAndroid = "1.7.0"
 
 [libraries]
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
@@ -24,6 +25,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
+androidx-animation-android = { group = "androidx.compose.animation", name = "animation-android", version.ref = "animationAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
