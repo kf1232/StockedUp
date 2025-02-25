@@ -1,16 +1,16 @@
 package com.fink.stockedup.data.database
 
 import android.content.Context
-import androidx.room.*
+import androidx.room.Database
+import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.fink.stockedup.data.dao.PantryDao
 import com.fink.stockedup.data.entity.PantryItem
 
 @Database(entities = [PantryItem::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class PantryDatabase : RoomDatabase() {
-
-    // 🔹 DAO access
     abstract fun pantryDao(): PantryDao
 
     companion object {
@@ -23,10 +23,7 @@ abstract class PantryDatabase : RoomDatabase() {
                     context.applicationContext,
                     PantryDatabase::class.java,
                     "pantry_database"
-                )
-                    .addTypeConverter(Converters())
-                    .fallbackToDestructiveMigration()
-                    .build()
+                ).build()
                 INSTANCE = instance
                 instance
             }
