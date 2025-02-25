@@ -1,1 +1,58 @@
-/build
+# Gradle files
+.gradle/
+.gradle/*
+
+# Local build files
+/build/
+**/build/
+**/out/
+**/captures/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE and editor settings
+.idea/
+.vscode/
+*.iml
+*.log
+
+# Keystore files (Avoid committing keys!)
+*.jks
+*.keystore
+
+# Local properties (SDK paths, etc.)
+local.properties
+
+# Generated files
+/.cxx/
+/captures/
+/*.apk
+/*.ap_
+/*.aab
+*.dex
+*.so
+*.jar
+*.class
+
+# Jetpack Compose Preview Cache
+.idea/caches/build_file_checksums.ser
+
+# Dependency directories
+**/node_modules/
+**/.gradle/
+**/cxx/
+**/libs/
+**/.idea/
+
+# Build outputs
+**/build/
+**/.externalNativeBuild/
+
+# Miscellaneous
+.DS_Store
+*.swp
+*.swo
+*.swn
+
+# Firebase and Google Services (Do NOT commit API keys!)
+google-services.json
+app/google-services.json
