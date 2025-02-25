@@ -6,14 +6,15 @@ import java.util.Date
 
 @Entity(tableName = "pantry_items")
 data class PantryItem(
-    @PrimaryKey(autoGenerate = true) val item_id: Long = 0,
-    val item_name: String,
-    val item_quantity: Int,
-    val item_category: String,
-    val item_expiration_date: Date?,
-    val item_storage_location: String,
-    val item_unit: String,
-    val item_last_updated: Long = System.currentTimeMillis(),
-    val item_notes: String? = null,
-    val item_favorite: Boolean = false
+    @PrimaryKey(autoGenerate = true)
+    val itemId: Long = 0,
+    val itemName: String,
+    val itemQuantity: Int,
+    val itemCategory: String,
+    val itemExpirationDate: Date?,
+    val itemStorageLocation: String,
+    val itemUnit: String,
+    val itemLastUpdated: Long = System.currentTimeMillis(),
+    val itemNotes: String? = null,
+    val itemFavorite: Boolean = false
 )

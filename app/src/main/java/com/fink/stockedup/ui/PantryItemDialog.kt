@@ -6,7 +6,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fink.stockedup.data.entity.PantryItem
-import java.time.LocalDate
 
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,16 +36,15 @@ fun PantryItemDialog(onDismiss: () -> Unit, onConfirm: (PantryItem) -> Unit) {
                     }
 
                     val newItem = PantryItem(
-                        item_name = itemName,
-                        item_quantity = itemQuantity.toInt(),
-                        item_category = itemCategory.ifEmpty { "Uncategorized" },
-                        item_expiration_date = parsedDate,
-                        item_last_updated = System.currentTimeMillis(),
-                        item_id = 0,
-                        item_storage_location = itemStorageLocation.ifEmpty { "Unknown" },
-                        item_unit = itemUnit.ifEmpty { "Units" },
-                        item_notes = itemNotes.ifEmpty { "" },
-                        item_favorite = itemFavorite
+                        itemName = itemName,
+                        itemQuantity = itemQuantity.toInt(),
+                        itemCategory = itemCategory.ifEmpty { "Uncategorized" },
+                        itemExpirationDate = parsedDate,
+                        itemLastUpdated = System.currentTimeMillis(),
+                        itemStorageLocation = itemStorageLocation.ifEmpty { "Unknown" },
+                        itemUnit = itemUnit.ifEmpty { "Units" },
+                        itemNotes = itemNotes.ifEmpty { "" },
+                        itemFavorite = itemFavorite
                     )
                     onConfirm(newItem)
                 }
@@ -63,7 +61,7 @@ fun PantryItemDialog(onDismiss: () -> Unit, onConfirm: (PantryItem) -> Unit) {
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp) // ✅ Manages spacing automatically
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 TextField(
                     value = itemName,

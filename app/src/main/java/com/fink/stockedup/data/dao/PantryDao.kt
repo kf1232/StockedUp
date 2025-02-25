@@ -12,15 +12,15 @@ interface PantryDao {
     suspend fun addItem(item: PantryItem): Long
 
     // 🔹 Retrieve all items
-    @Query("SELECT * FROM pantry_items ORDER BY item_name ASC")
+    @Query("SELECT * FROM pantry_items ORDER BY itemName ASC")
     fun getAllItems(): Flow<List<PantryItem>>
 
     // 🔹 Retrieve paginated items
-    @Query("SELECT * FROM pantry_items ORDER BY item_name ASC")
+    @Query("SELECT * FROM pantry_items ORDER BY itemName ASC")
     fun getPagedItems(): PagingSource<Int, PantryItem>
 
     // 🔹 Retrieve a single item by ID
-    @Query("SELECT * FROM pantry_items WHERE item_id = :id LIMIT 1")
+    @Query("SELECT * FROM pantry_items WHERE itemId = :id LIMIT 1")
     suspend fun getItemById(id: Long): PantryItem?
 
     // 🔹 Update an existing item
@@ -32,6 +32,6 @@ interface PantryDao {
     suspend fun deleteItem(item: PantryItem)
 
     // 🔹 Delete all expired items
-    @Query("DELETE FROM pantry_items WHERE item_expiration_date < :currentDate")
+    @Query("DELETE FROM pantry_items WHERE itemExpirationDate < :currentDate")
     suspend fun deleteExpiredItems(currentDate: Long)
 }

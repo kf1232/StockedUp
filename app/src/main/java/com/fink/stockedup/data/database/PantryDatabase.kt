@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import com.fink.stockedup.data.dao.PantryDao
 import com.fink.stockedup.data.entity.PantryItem
 
-@Database(entities = [PantryItem::class], version = 1, exportSchema = false)
+@Database(entities = [PantryItem::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class PantryDatabase : RoomDatabase() {
     abstract fun pantryDao(): PantryDao
