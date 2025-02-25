@@ -3,7 +3,6 @@ package com.fink.stockedup
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -17,28 +16,22 @@ import com.fink.stockedup.viewmodel.PantryViewModel
 import com.fink.stockedup.viewmodel.PantryViewModelFactory
 
 class MainActivity : ComponentActivity() {
-    private lateinit var pantryViewModel: PantryViewModel
+    private val database: PantryDatabase by lazy { PantryDatabase.getDatabase(this) }
+    private val repository: PantryRepository by lazy { PantryRepository(database.pantryDao()) }
+
+    private val pantryViewModel: PantryViewModel by lazy {
+        ViewModelProvider(this, PantryViewModelFactory(repository))[PantryViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // ✅ Create Database & Repository
-        val database = PantryDatabase.getDatabase(this)
-        val repository = PantryRepository(database.pantryDao())
-
-        // ✅ Manually initialize ViewModel with Factory
-        pantryViewModel = ViewModelProvider(
-            this,
-            PantryViewModelFactory(repository)
-        )[PantryViewModel::class.java]
         setContent {
             StockedUpTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Box(
-                        modifier = Modifier.padding(innerPadding)
-                    ) {
-                        PantryScreen(pantryViewModel)
-                    }
+                    PantryScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        viewModel = pantryViewModel
+                    )
                 }
             }
         }

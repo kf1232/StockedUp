@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun PantryItemDialog(onDismiss: () -> Unit, onConfirm: (PantryItem) -> Unit) {
+fun PantryAddItemDialog(onDismiss: () -> Unit, onConfirm: (PantryItem) -> Unit) {
     var itemName by remember { mutableStateOf("") }
     var itemQuantity by remember { mutableStateOf("1") }
     var itemCategory by remember { mutableStateOf("") }
