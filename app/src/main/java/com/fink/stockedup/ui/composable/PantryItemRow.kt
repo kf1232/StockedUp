@@ -39,7 +39,7 @@ fun PantryItemRow(
             .padding(vertical = 6.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onLongPress = { onLongPress() }, // ✅ Unified tap & long press handling
+                    onLongPress = { onLongPress() },
                     onTap = { isExpanded = !isExpanded }
                 )
             },
@@ -48,7 +48,6 @@ fun PantryItemRow(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
 
-            // ✅ Normal State Header (Always Visible)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -60,13 +59,11 @@ fun PantryItemRow(
                     modifier = Modifier.weight(1f)
                 )
 
-                // ✅ Show Quantity Buttons Only When Not Expanded
                 if (!isExpanded) {
                     QuantityButtonsRow(item, onUpdate)
                 }
             }
 
-            // ✅ Expanded Content (Smooth Transition)
             AnimatedVisibility(
                 visible = isExpanded,
                 enter = fadeIn(animationSpec = tween(300)) + expandVertically(animationSpec = tween(400)),
@@ -76,24 +73,23 @@ fun PantryItemRow(
                     Text("Quantity: ${item.itemQuantity}", fontSize = 14.sp)
                     Text("Category: ${item.itemCategory}", fontSize = 14.sp)
 
-                    // ✅ Expiration Date with Color Indicator
                     val daysLeft = item.itemExpirationDate?.let { calculateDaysUntilExpiration(it) }
                     val expirationColor = when {
                         daysLeft == null -> Color.Gray
-                        daysLeft < 0 -> Color.Red // Expired
-                        daysLeft <= 3 -> Color.Yellow // ⚠️ Warning (About to expire)
+                        daysLeft < 0 -> Color.Red
+                        daysLeft <= 3 -> Color.Yellow
                         else -> Color.White
                     }
 
                     Text(
                         text = "Expiration: ${item.itemExpirationDate?.let { formatDate(it) } ?: "N/A"}",
                         fontSize = 14.sp,
-                        color = expirationColor // ✅ Color-coded expiration status
+                        color = expirationColor
                     )
                     Text(
                         text = "Days till Spoiled: ${daysLeft ?: "N/A"}",
                         fontSize = 14.sp,
-                        color = expirationColor // ✅ Same color coding
+                        color = expirationColor
                     )
 
                     Text("Location: ${item.itemStorageLocation}", fontSize = 14.sp)
