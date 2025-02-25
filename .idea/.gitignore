@@ -1,3 +1,10 @@
-# Default ignored files
-/shelf/
-/workspace.xml
+# Ignore all .idea files
+*.iml
+.idea/**
+
+# Keep only necessary shared settings
+!.idea/misc.xml
+!.idea/codeStyles/
+!.idea/dictionaries/
+!.idea/inspectionProfiles/
+!.idea/runConfigurations/
