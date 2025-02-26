@@ -1,4 +1,4 @@
-package com.fink.stockedup.ui.composable
+package com.fink.stockedup.ui.composable.pantry
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size

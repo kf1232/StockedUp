@@ -1,37 +1,51 @@
-package com.fink.stockedup.ui
+package com.fink.stockedup.ui.composable.pantry
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.fink.stockedup.ui.composable.PantryItemRow
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fink.stockedup.data.entity.PantryItem
 import com.fink.stockedup.ui.dialog.PantryEditItemDialog
 import com.fink.stockedup.viewmodel.PantryViewModel
-import com.fink.stockedup.data.entity.PantryItem
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
-fun PantryScreen(
+fun PantryScreen (
     modifier: Modifier,
-    viewModel: PantryViewModel
+    viewModel: PantryViewModel,
 ) {
     val (showAddDialog, selectedItem, openAddDialog, openEditDialog, closeDialogs) = rememberDialogState()
     val pantryItems by viewModel.pantryItems.collectAsStateWithLifecycle()
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(onClick = openAddDialog) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Item")
             }
         }
-    ) { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp)) {
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp)
+        ) {
             Text("Pantry Items", style = MaterialTheme.typography.headlineMedium)
 
             LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -46,21 +60,21 @@ fun PantryScreen(
                 }
             }
         }
-    }
 
-    PantryDialogs(
-        showAddDialog = showAddDialog,
-        selectedItem = selectedItem,
-        onDismiss = closeDialogs,
-        onAdd = { newItem ->
-            viewModel.addItem(newItem)
-            closeDialogs()
-        },
-        onEdit = { updatedItem ->
-            viewModel.updateItem(updatedItem)
-            closeDialogs()
-        }
-    )
+        PantryDialogs(
+            showAddDialog = showAddDialog,
+            selectedItem = selectedItem,
+            onDismiss = closeDialogs,
+            onAdd = { newItem ->
+                viewModel.addItem(newItem)
+                closeDialogs()
+            },
+            onEdit = { updatedItem ->
+                viewModel.updateItem(updatedItem)
+                closeDialogs()
+            }
+        )
+    }
 }
 
 @Composable
