@@ -25,4 +25,8 @@ object DateUtils {
             dateTimeFormat.format(Date(it))
         } ?: "N/A"
     }
+
+    fun calculateDaysUntilExpiration(it: Long): Int {
+        return 5 // TODO actual expiration date function figured out.
+    }
 }

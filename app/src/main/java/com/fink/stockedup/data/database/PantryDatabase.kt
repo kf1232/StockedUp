@@ -13,7 +13,6 @@ import com.fink.stockedup.data.entity.*
     version = 1,
     exportSchema = false
 )
-@TypeConverters(Converters::class)
 abstract class PantryDatabase : RoomDatabase() {
 
     abstract fun itemDao(): ItemDao

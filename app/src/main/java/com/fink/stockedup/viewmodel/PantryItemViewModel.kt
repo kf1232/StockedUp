@@ -13,17 +13,31 @@ import kotlinx.coroutines.launch
 class PantryItemViewModel(private val repository: PantryItemRepository) : ViewModel() {
 
     // 🔹 Flow for observing all pantry items (Live Updates)
-    val allPantryItems: StateFlow<List<PantryItemModel>> = repository.getAll()
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+    private val _allPantryItems = MutableStateFlow<List<PantryItemModel>>(emptyList())
+    val allPantryItems: StateFlow<List<PantryItemModel>> = _allPantryItems.asStateFlow()
 
     // 🔹 Flow for observing paged pantry items
     val pagedPantryItems: Flow<PagingData<PantryItemModel>> = repository.getAllPaged()
         .cachedIn(viewModelScope)
 
+    init {
+        refreshPantryItems()
+    }
+
+    // 🔹 Fetch all pantry items and update _allPantryItems
+    private fun refreshPantryItems() {
+        viewModelScope.launch {
+            repository.getAll().collect { items ->
+                _allPantryItems.value = items
+            }
+        }
+    }
+
     // 🔹 Create a new pantry item
     fun createPantryItem(item: PantryItem) {
         viewModelScope.launch {
             repository.create(item)
+            refreshPantryItems() // Ensure UI updates after insert
         }
     }
 
@@ -36,6 +50,7 @@ class PantryItemViewModel(private val repository: PantryItemRepository) : ViewMo
     fun updatePantryItem(item: PantryItem) {
         viewModelScope.launch {
             repository.update(item)
+            refreshPantryItems() // Ensure UI updates after update
         }
     }
 
@@ -43,6 +58,7 @@ class PantryItemViewModel(private val repository: PantryItemRepository) : ViewMo
     fun deletePantryItem(id: Long) {
         viewModelScope.launch {
             repository.delete(id)
+            refreshPantryItems() // Ensure UI updates after deletion
         }
     }
 
@@ -50,6 +66,7 @@ class PantryItemViewModel(private val repository: PantryItemRepository) : ViewMo
     fun deleteAllPantryItems() {
         viewModelScope.launch {
             repository.deleteAll()
+            refreshPantryItems() // Ensure UI updates after reset
         }
     }
 }
