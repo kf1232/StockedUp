@@ -4,7 +4,6 @@ import androidx.paging.PagingSource
 import androidx.room.*
 import com.fink.stockedup.data.entity.PantryItem
 import com.fink.stockedup.data.model.PantryItemModel
-import com.fink.stockedup.data.model.PantryItemWithDetails
 import kotlinx.coroutines.flow.Flow
 
 @Dao
