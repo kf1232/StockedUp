@@ -1,4 +1,4 @@
-package com.fink.stockedup.ui.composable.pantry
+package com.fink.stockedup.ui.dialog
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

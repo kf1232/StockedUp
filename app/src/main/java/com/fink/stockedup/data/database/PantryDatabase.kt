@@ -5,13 +5,21 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.fink.stockedup.data.dao.PantryDao
-import com.fink.stockedup.data.entity.PantryItem
+import com.fink.stockedup.data.dao.*
+import com.fink.stockedup.data.entity.*
 
-@Database(entities = [PantryItem::class], version = 2, exportSchema = false)
+@Database(
+    entities = [Item::class, PantryItem::class, RecipeList::class, RecipeItem::class],
+    version = 1,
+    exportSchema = false
+)
 @TypeConverters(Converters::class)
 abstract class PantryDatabase : RoomDatabase() {
-    abstract fun pantryDao(): PantryDao
+
+    abstract fun itemDao(): ItemDao
+    abstract fun pantryItemDao(): PantryItemDao
+    abstract fun recipeListDao(): RecipeListDao
+    abstract fun recipeItemDao(): RecipeItemDao
 
     companion object {
         @Volatile
@@ -23,7 +31,9 @@ abstract class PantryDatabase : RoomDatabase() {
                     context.applicationContext,
                     PantryDatabase::class.java,
                     "pantry_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }
