@@ -1,42 +1,47 @@
 package com.fink.stockedup.data.dao
 
-import androidx.paging.PagingSource
 import androidx.room.*
 import com.fink.stockedup.data.entity.PantryItem
-import com.fink.stockedup.data.model.PantryItemModel
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PantryItemDao {
 
-    // 🔹 Create a new pantry item (STRICT CREATE)
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun create(item: PantryItem): Long
+		// [ C ] CREATE
+				// Insert a new pantry item, ensuring it references an existing `itemId`
+				@Insert(onConflict = OnConflictStrategy.ABORT)
+				suspend fun addPantryItem(pantryItem: PantryItem): Long
 
-    // 🔹 Retrieve a single pantry item with full item details
-    @Transaction
-    @Query("SELECT * FROM pantry_item WHERE pantryItemId = :id LIMIT 1")
-    fun get(id: Long): Flow<PantryItemModel?>
 
-    // 🔹 Retrieve all pantry items with full item details (Live tracking)
-    @Transaction
-    @Query("SELECT * FROM pantry_item ORDER BY pantryItemCreated DESC")
-    fun getAll(): Flow<List<PantryItemModel>>
 
-    // 🔹 Retrieve paginated pantry items with full item details
-    @Transaction
-    @Query("SELECT * FROM pantry_item ORDER BY pantryItemCreated DESC")
-    fun getAllPaged(): PagingSource<Int, PantryItemModel>
+		// [ R ] READ
+				// Retrieve a pantry item by ID
+				@Query("SELECT * FROM pantry_items WHERE pantryItemId = :id LIMIT 1")
+				suspend fun getPantryItemById(id: Long): PantryItem?
 
-    // 🔹 Update an existing pantry item
-    @Update
-    suspend fun update(item: PantryItem): Int
+				// Retrieve all pantry items linked to a specific `itemId`
+				@Query("SELECT * FROM pantry_items WHERE itemId = :itemId ORDER BY pantryItemLastUpdated DESC")
+				fun getPantryItemsByItemId(itemId: Long): Flow<List<PantryItem>>
 
-    // 🔹 Delete a single pantry item by ID
-    @Query("DELETE FROM pantry_item WHERE pantryItemId = :id")
-    suspend fun delete(id: Long): Int
+				// Retrieve all pantry items (live updates)
+				@Query("SELECT * FROM pantry_items ORDER BY pantryItemLastUpdated DESC")
+				fun getAllPantryItems(): Flow<List<PantryItem>>
 
-    // 🔹 Delete all pantry items (Full reset)
-    @Query("DELETE FROM pantry_item")
-    suspend fun deleteAll(): Int
+
+
+		// [ U ] UPDATE
+				// Update an existing pantry item
+				@Update
+				suspend fun updatePantryItem(pantryItem: PantryItem)
+
+
+
+		// [ D ] DELETE
+				// Delete a specific pantry item (does NOT delete from `items`)
+				@Query("DELETE FROM pantry_items WHERE pantryItemId = :id")
+				suspend fun deletePantryItemById(id: Long)
+
+				// Delete all pantry items (does NOT delete from `items`)
+				@Query("DELETE FROM pantry_items")
+				suspend fun deleteAllPantryItems()
 }

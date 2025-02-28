@@ -7,31 +7,43 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ItemDao {
-
-    // Create a new item (STRICT CREATE: Fails if item already exists)
+    // [ C ]
+    // Insert new item (Fail if exists)
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun create(item: Item): Long
+    suspend fun addItem(item: Item): Long
 
+    // [ R ]
     // Retrieve a single item by ID
-    @Query("SELECT * FROM item WHERE itemId = :id LIMIT 1")
-    fun get(id: Long): Flow<Item?>
+    @Query("SELECT * FROM items WHERE itemId = :id LIMIT 1")
+    suspend fun getItemById(id: Long): Item?
 
-    // Retrieve all items (Live tracking)
-    @Query("SELECT * FROM item ORDER BY itemName ASC")
-    fun getAll(): Flow<List<Item>>
+    // Retrieve all items
+    @Query("SELECT * FROM items ORDER BY itemName ASC")
+    fun getAllItems(): Flow<List<Item>>
 
-    // Retrieve all items with paging support
-    @Query("SELECT * FROM item ORDER BY itemName ASC")
-    fun getAllPaged(): PagingSource<Int, Item>
+    // Retrieve paginated items
+    @Query("SELECT * FROM items ORDER BY itemName ASC")
+    fun getPagedItems(): PagingSource<Int, Item>
 
+    // Retrieve items by category
+    @Query("SELECT * FROM items WHERE itemCategory = :category ORDER BY itemName ASC")
+    fun getAllCategory(category: String): Flow<List<Item>>
+
+    // Retrieve all favorite items
+    @Query("SELECT * FROM items WHERE itemFavorite = 1 ORDER BY itemName ASC")
+    fun getAllFavorites(): Flow<List<Item>>
+
+    // [ U ]
+    // Update an existing item
     @Update
-    suspend fun update(item: Item): Int
+    suspend fun updateItem(item: Item)
 
-    // Delete a single item by ID
-    @Query("DELETE FROM item WHERE itemId = :id")
-    suspend fun delete(id: Long): Int
+    // [ D ]
+    // Delete an item by ID
+    @Query("DELETE FROM items WHERE itemId = :id")
+    suspend fun deleteItemById(id: Long)
 
-    // Delete all items (Full reset)
-    @Query("DELETE FROM item")
-    suspend fun deleteAll(): Int
+    // Delete all items
+    @Query("DELETE FROM items")
+    suspend fun deleteAll()
 }

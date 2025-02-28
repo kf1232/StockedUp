@@ -2,71 +2,56 @@ package com.fink.stockedup.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import com.fink.stockedup.data.model.PantryItemModel
 import com.fink.stockedup.data.entity.PantryItem
-import com.fink.stockedup.repository.PantryItemRepository
+import com.fink.stockedup.data.repository.PantryItemRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class PantryItemViewModel(private val repository: PantryItemRepository) : ViewModel() {
 
-    // 🔹 Flow for observing all pantry items (Live Updates)
-    private val _allPantryItems = MutableStateFlow<List<PantryItemModel>>(emptyList())
-    val allPantryItems: StateFlow<List<PantryItemModel>> = _allPantryItems.asStateFlow()
+		// Live list of all pantry items
+		private val _allPantryItems = MutableStateFlow<List<PantryItem>>(emptyList())
+		val allPantryItems: StateFlow<List<PantryItem>> = _allPantryItems.asStateFlow()
 
-    // 🔹 Flow for observing paged pantry items
-    val pagedPantryItems: Flow<PagingData<PantryItemModel>> = repository.getAllPaged()
-        .cachedIn(viewModelScope)
+		// Initialize and observe live pantry items
+		init {
+				viewModelScope.launch {
+						repository.getAllPantryItems().collect { items ->
+								_allPantryItems.value = items
+						}
+				}
+		}
 
-    init {
-        refreshPantryItems()
-    }
+		// Add a new pantry item
+		fun addPantryItem(pantryItem: PantryItem) {
+				viewModelScope.launch {
+						repository.addPantryItem(pantryItem)
+				}
+		}
 
-    // 🔹 Fetch all pantry items and update _allPantryItems
-    private fun refreshPantryItems() {
-        viewModelScope.launch {
-            repository.getAll().collect { items ->
-                _allPantryItems.value = items
-            }
-        }
-    }
+		// Get pantry items by itemId
+		fun getPantryItemsByItemId(itemId: Long): Flow<List<PantryItem>> {
+				return repository.getPantryItemsByItemId(itemId)
+		}
 
-    // 🔹 Create a new pantry item
-    fun createPantryItem(item: PantryItem) {
-        viewModelScope.launch {
-            repository.create(item)
-            refreshPantryItems() // Ensure UI updates after insert
-        }
-    }
+		// Update an existing pantry item
+		fun updatePantryItem(pantryItem: PantryItem) {
+				viewModelScope.launch {
+						repository.updatePantryItem(pantryItem)
+				}
+		}
 
-    // 🔹 Get a specific pantry item by ID
-    fun getPantryItemById(id: Long): Flow<PantryItemModel?> {
-        return repository.get(id)
-    }
+		// Delete a specific pantry item by ID
+		fun deletePantryItemById(id: Long) {
+				viewModelScope.launch {
+						repository.deletePantryItemById(id)
+				}
+		}
 
-    // 🔹 Update an existing pantry item
-    fun updatePantryItem(item: PantryItem) {
-        viewModelScope.launch {
-            repository.update(item)
-            refreshPantryItems() // Ensure UI updates after update
-        }
-    }
-
-    // 🔹 Delete a pantry item by ID
-    fun deletePantryItem(id: Long) {
-        viewModelScope.launch {
-            repository.delete(id)
-            refreshPantryItems() // Ensure UI updates after deletion
-        }
-    }
-
-    // 🔹 Delete all pantry items (Full Reset)
-    fun deleteAllPantryItems() {
-        viewModelScope.launch {
-            repository.deleteAll()
-            refreshPantryItems() // Ensure UI updates after reset
-        }
-    }
+		// Delete all pantry items (DOES NOT delete items)
+		fun deleteAllPantryItems() {
+				viewModelScope.launch {
+						repository.deleteAllPantryItems()
+				}
+		}
 }

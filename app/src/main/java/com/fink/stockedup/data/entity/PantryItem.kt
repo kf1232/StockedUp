@@ -1,35 +1,39 @@
 package com.fink.stockedup.data.entity
 
-import androidx.room.*
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
+import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "pantry_item",
-    foreignKeys = [ForeignKey(
-        entity = Item::class,
-        parentColumns = ["itemId"],
-        childColumns = ["itemId"],
-        onDelete = ForeignKey.RESTRICT // Cannot delete item until cleared fully from pantry_item
-    )],
-    indices = [Index(value = ["itemId"])]
+		tableName = "pantry_items",
+		foreignKeys = [
+				ForeignKey(
+						entity = Item::class,
+						parentColumns = ["itemId"],
+						childColumns = ["itemId"],
+						onDelete = ForeignKey.NO_ACTION
+				)
+		],
+		indices = [Index(value = ["itemId"])]
 )
 data class PantryItem(
-    @PrimaryKey(autoGenerate = true)
-    val pantryItemId: Long = 0,
-    val itemId: Long,
-    val pantryItemQuantity: Double,
-    val pantryItemStorageLocation: String?,
-    val pantryItemNote: String?,
-    val pantryItemExpirationDate: Long?,
-    val pantryItemCreated: Long = System.currentTimeMillis(),
-    val pantryItemUpdated: Long = System.currentTimeMillis(),
-    val pantryItemFavorite: Boolean = false
+		@PrimaryKey(autoGenerate = true)
+		val pantryItemId: Long = 0,
+
+		val itemId: Long, // Foreign key reference to `items`, now indexed
+
+		// Optional Override Fields
+		val pantryItemName: String? = null, // Overrides `itemName`
+		val pantryItemCategory: String? = null, // Overrides `itemCategory`
+		val pantryItemUnit: String? = null, // Overrides `itemUnit`
+
+		val pantryItemQuantity: Int, // Tracks inventory count
+		val pantryItemNotes: String? = null, // Custom notes
+		val pantryItemFavorite: Boolean? = null, // Overrides `itemFavorite`
+
+		// Expiration and Tracking Data
+		val pantryItemExpirationDate: Long = System.currentTimeMillis(),
+		val pantryItemCreatedDate: Long = System.currentTimeMillis(),
+		val pantryItemLastUpdated: Long = System.currentTimeMillis()
 )
-
-
-// TODO itemQuantity could become a DOUBLE value to better manage / count on-hand products.
-// TODO set itemName to UNIQUE, unclear if we want to allow multiple records of the same thing.
-// TODO set itemStorageLocation to an ENUM or set of fixed values
-// TODO itemUnit should be a fixed set of measurement types
-
-
-// TODO I wouldn't want this to delete in cascade.  There should be an error asking the user to clear the pantry first.

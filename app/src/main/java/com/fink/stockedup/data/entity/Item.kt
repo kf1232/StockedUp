@@ -1,17 +1,21 @@
 package com.fink.stockedup.data.entity
 
-import androidx.room.*
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Entity(tableName = "item")
+@Entity(tableName = "items")
 data class Item(
-    @PrimaryKey(autoGenerate = true) val itemId: Long = 0,
-    val itemName: String,
-    val itemUnit: String?,
-    val itemCategory: String?,
-    val itemCreated: Long = System.currentTimeMillis(),
-    val itemUpdated: Long = System.currentTimeMillis(),
-    val itemFavorite: Boolean = false
-)
+    @PrimaryKey(autoGenerate = true)
+    val itemId: Long = 0,
 
-// TODO investigate itemName being a unique value
-// TODO standardize itemUnit across all entity fields.
+    val itemName: String,
+    val itemCategory: String,
+    val itemUnit: String,
+
+    val itemNotes: String? = null,
+
+    val itemFavorite: Boolean = false,
+
+    val itemCreatedDate: Long = System.currentTimeMillis(),
+    val itemLastUpdated: Long = System.currentTimeMillis(),
+)

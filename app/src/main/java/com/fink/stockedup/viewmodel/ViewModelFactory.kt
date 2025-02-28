@@ -2,14 +2,12 @@ package com.fink.stockedup.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.fink.stockedup.repository.ItemRepository
-import com.fink.stockedup.repository.PantryItemRepository
-import com.fink.stockedup.repository.RecipeRepository
+import com.fink.stockedup.data.repository.ItemRepository
+import com.fink.stockedup.data.repository.PantryItemRepository
 
 class ViewModelFactory(
     private val itemRepository: ItemRepository,
-    private val pantryItemRepository: PantryItemRepository,
-    private val recipeRepository: RecipeRepository
+    private val pantryItemRepository: PantryItemRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
@@ -21,11 +19,7 @@ class ViewModelFactory(
                 @Suppress("UNCHECKED_CAST")
                 PantryItemViewModel(pantryItemRepository) as T
             }
-            modelClass.isAssignableFrom(RecipeViewModel::class.java) -> {
-                @Suppress("UNCHECKED_CAST")
-                RecipeViewModel(recipeRepository) as T
-            }
-            else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+            else -> throw IllegalArgumentException("ViewModelFactory: Unknown ViewModel class - ${modelClass.name}")
         }
     }
 }

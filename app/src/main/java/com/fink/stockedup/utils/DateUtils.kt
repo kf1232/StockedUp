@@ -1,32 +1,33 @@
 package com.fink.stockedup.utils
 
 import java.text.SimpleDateFormat
-import java.util.*
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.util.Date
+import java.util.Locale
 
 object DateUtils {
+    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
-    private val dateFormat = SimpleDateFormat("yyyy MM-dd", Locale.getDefault())
-    private val dateTimeFormat = SimpleDateFormat("yyyy MM-dd HH:mm", Locale.getDefault())
-
-    /**
-     * Converts a timestamp (Long) to "YYYY MM-DD" format.
-     */
-    fun formatDate(timestamp: Long?): String {
-        return timestamp?.let {
-            dateFormat.format(Date(it))
-        } ?: "N/A"
+    fun formatDateTime(timestamp: Long): String {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault()).format(formatter)
     }
 
-    /**
-     * Converts a timestamp (Long) to "YYYY MM-DD HH:MM" format.
-     */
-    fun formatDateTime(timestamp: Long?): String {
-        return timestamp?.let {
-            dateTimeFormat.format(Date(it))
-        } ?: "N/A"
+    // ✅ Utility function to format date
+    fun formatDate(date: Date): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return formatter.format(date)
     }
 
-    fun calculateDaysUntilExpiration(it: Long): Int {
-        return 5 // TODO actual expiration date function figured out.
+    fun calculateDaysUntilExpiration(expirationDate: Date): Long {
+        val today = LocalDate.now()
+        val expiration = Instant.ofEpochMilli(expirationDate.time)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+        return ChronoUnit.DAYS.between(today, expiration)
     }
 }
